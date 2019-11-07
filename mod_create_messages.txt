@@ -1,9 +1,6 @@
 Attribute VB_Name = "mod_create_messages"
 Option Explicit
-'Najwiêksza funkcja s³u¿¹ca do tworzenia wiadomoœci. Dane potrzebne do wysy³ki zbierane s¹ w trzech tablicach:
-'bodys() - zawiera treœci wiadomoœci, persons() - przechowuje adresatów, managers() - przechowuje adresy managerów do DW
-'tablice nastêpnie s¹ przekazywane do funkcji generuj¹cej podgl¹d oraz funkcji wysy³aj¹cej wiadomoœci
-'funkcja na wejœcie przyjmuje datê, dla której maj¹ zostaæ wys³ane wiadomoœci oraz typ spó³ek (GI/Podwykonawcy)
+
 
 Function CreateMessages(messagedate As Date, companysType As String)
 
@@ -35,8 +32,8 @@ ElseIf companysType = "Podwykonawcy" Then
 
 End If
 
-Call copyData(messagedate, companysType) 'wywo³anie funkcji przygotowuj¹cej dane wejœciowe
-Call Sort(companysType) 'wywo³anie funkcji sortuj¹cej
+Call copyData(messagedate, companysType) 'wywoÂ³anie funkcji przygotowujÂ¹cej dane wejÅ“ciowe
+Call Sort(companysType) 'wywoÂ³anie funkcji sortujÂ¹cej
 
 i = 2
 
@@ -50,9 +47,9 @@ Do Until (IsEmpty(WsadSheet.Cells(i, 1)))
 
     Do
     
-        body = body & WsadSheet.Cells(i, 4) & " dla spó³ek: " 'pobranie nazwy zadania
+        body = body & WsadSheet.Cells(i, 4) & " dla spÃ³Â³ek: " 'pobranie nazwy zadania
         
-        Do While True 'zbieranie spó³ek
+        Do While True 'zbieranie spÃ³Â³ek
         
             body = body & WsadSheet.Cells(i, 5) & ", "
             If (WsadSheet.Cells(i + 1, 4) = WsadSheet.Cells(i, 4) And WsadSheet.Cells(i + 1, 6) = WsadSheet.Cells(i, 6) And Not IsEmpty(WsadSheet.Cells(i, 4))) Then
@@ -68,7 +65,7 @@ Do Until (IsEmpty(WsadSheet.Cells(i, 1)))
              
     Loop While WsadSheet.Cells(i, 6) = WsadSheet.Cells(i - 1, 6) And Not IsEmpty(WsadSheet.Cells(i, 6))
     
-        ReDim Preserve bodys(tabssize)     'dodawanie elementów do tablic
+        ReDim Preserve bodys(tabssize)     'dodawanie elementÃ³w do tablic
         ReDim Preserve persons(tabssize)
         ReDim Preserve leaders(tabssize)
         ReDim Preserve managers(tabssize)
@@ -90,17 +87,17 @@ Do Until (IsEmpty(WsadSheet.Cells(i, 1)))
 
 Loop
 
-    If tabssize = 1 Then 'check, czy s¹ maile do wys³ania
-       ' MsgBox ("Brak maili do wys³ania dla daty " & messagedate & " dla spó³ek " & companysType & "!")
+    If tabssize = 1 Then 'check, czy sÂ¹ maile do wysÂ³ania
+       ' MsgBox ("Brak maili do wysÂ³ania dla daty " & messagedate & " dla spÃ³Â³ek " & companysType & "!")
         Exit Function
     End If
         
     
-    'ExportHTML bodys:=bodys, persons:=persons, leaders:=leaders, managers:=managers, directors:=directors, name:="podglad" 'wywo³anie funkcji tworz¹cej podgl¹d
+    'ExportHTML bodys:=bodys, persons:=persons, leaders:=leaders, managers:=managers, directors:=directors, name:="podglad" 
     
-   ' If MsgBox("Wygenerowano podgl¹d dla daty " & messagedate & " dla spó³ek " & companysType & " . Wys³aæ maile?", vbYesNo) = vbNo Then Exit Function 'generacja komunikatu
+   ' If MsgBox("Wygenerowano podglÂ¹d dla daty " & messagedate & " dla spÃ³Â³ek " & companysType & " . WysÂ³aÃ¦ maile?", vbYesNo) = vbNo Then Exit Function 
     
-    SendMails persons:=persons, bodys:=bodys, leaders:=leaders, managers:=managers, directors:=directors, messagedate:=messagedate, companysType:=companysType 'wywo³anie funkcji rozsy³aj¹cej maile maile
+    SendMails persons:=persons, bodys:=bodys, leaders:=leaders, managers:=managers, directors:=directors, messagedate:=messagedate, companysType:=companysType 'wywoÂ³anie funkcji rozsyÂ³ajÂ¹cej maile maile
 
 End Function
 
