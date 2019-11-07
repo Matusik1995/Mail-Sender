@@ -1,0 +1,84 @@
+Attribute VB_Name = "mod_send_mails"
+Option Explicit
+'Funkcja rozsy³aj¹ca maile na podstawie tablic podanych na wejœcie. Treœæ wiadomoœci zmienia siê w zale¿noœci od daty podanej na wejœcie oraz typu spó³ek
+
+
+Function SendMails(ByRef persons() As String, ByRef bodys() As String, ByRef leaders() As String, ByRef managers() As String, ByRef directors() As String, messagedate As Date, companysType As String)
+
+Dim OutApp As Object
+Dim OutMail As Object
+Dim i As Integer
+Dim link As String
+Dim yesterday, twodaysago, threedaysago As Date
+
+yesterday = Date - 1
+If Weekday(yesterday, vbMonday) = 7 Then: yesterday = yesterday - 2
+If Weekday(yesterday, vbMonday) = 6 Then: yesterday = yesterday - 1
+twodaysago = yesterday - 1
+If Weekday(twodaysago, vbMonday) = 7 Then: twodaysago = twodaysago - 2
+If Weekday(twodaysago, vbMonday) = 6 Then: twodaysago = twodaysago - 1
+threedaysago = twodaysago - 1
+If Weekday(threedaysago, vbMonday) = 7 Then: threedaysago = threedaysago - 2
+If Weekday(threedaysago, vbMonday) = 6 Then: threedaysago = threedaysago - 1
+
+
+If companysType = "GI" Then
+    link = ThisWorkbook.Worksheets(1).Range("A2")
+ElseIf companysType = "Podwykonawcy" Then
+    link = ThisWorkbook.Worksheets(1).Range("A3")
+End If
+    
+
+On Error Resume Next
+Set OutApp = GetObject(, "Outlook.Application")
+Set OutApp = CreateObject("Outlook.Application")
+On Error GoTo 0
+
+
+For i = 1 To UBound(persons) - LBound(persons)
+
+    Set OutMail = OutApp.CreateItem(0)
+               
+        With OutMail
+
+            '.Display
+            
+            .To = persons(i)
+        
+            If messagedate = yesterday Then
+                .CC = leaders(i)
+            ElseIf messagedate = twodaysago Then
+                .CC = leaders(i) & ";" & managers(i)
+            ElseIf messagedate = threedaysago Then
+                .CC = leaders(i) & ";" & managers(i) & ";" & directors(i)
+            End If
+            
+            .BCC = ""
+            
+            If (messagedate = yesterday Or messagedate = twodaysago Or messagedate = threedaysago) Then
+                .Subject = "Przypomnienie o niewykonanych zadaniach na witrynie Sharepoint"
+            Else
+                .Subject = "Powiadomienie o up³ywaj¹cym terminie zadañ na witrynie Sharepoint"
+            End If
+            
+            If (messagedate = Date) Then
+                .HTMLBody = "Dzieñ dobry, <br><br> Przypominamy, ¿e dzisiaj up³ywa termin zadañ widocznych poni¿ej. <br><br>" & bodys(i) & "<br>Link do witryny: " & link & "<br><br> <b>To jest wiadomoœæ wygenerowana automatycznie, prosimy na ni¹ nie odpowiadaæ.</b>" & .HTMLBody
+            ElseIf (messagedate = yesterday) Then
+                .HTMLBody = "Dzieñ dobry, <br><br> Przypominamy, ¿e w dniu " & messagedate & " up³yn¹³ termin zadañ widocznych poni¿ej. <br><br>" & bodys(i) & "<br>Link do witryny: " & link & "<br><br> <b>To jest wiadomoœæ wygenerowana automatycznie, prosimy na ni¹ nie odpowiadaæ.</b>" & .HTMLBody
+            ElseIf (messagedate = twodaysago) Then
+                .HTMLBody = "Dzieñ dobry, <br><br> Przypominamy, ¿e w dniu " & messagedate & " up³yn¹³ termin zadañ widocznych poni¿ej. Prosimy o wyjaœnienie i uzgodnienie z prze³o¿onymi przyczyn niewykonania zadania oraz jego ostateczn¹ realizacjê. <br><br>" & bodys(i) & "<br>Link do witryny: " & link & "<br><br> <b>To jest wiadomoœæ wygenerowana automatycznie, prosimy na ni¹ nie odpowiadaæ.</b>" & .HTMLBody
+            ElseIf (messagedate = threedaysago) Then
+                .HTMLBody = "Dzieñ dobry, <br><br> Przypominamy, ¿e w dniu " & messagedate & " up³yn¹³ termin zadañ widocznych poni¿ej. Prosimy dyrektorów o przes³anie informacji zwrotnej o dalszym trybie postêpowania na adres Konsolidacja-Komunikaty@impel.pl<br><br>" & bodys(i) & "<br>Link do witryny: " & link & "<br><br>" & .HTMLBody
+            End If
+           .SentOnBehalfOfName = "Konsolidacja-Komunikaty"
+            .send
+         End With
+    
+Next
+
+Set OutMail = Nothing
+Set OutApp = Nothing
+
+End Function
+
+

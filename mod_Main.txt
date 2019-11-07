@@ -1,0 +1,40 @@
+Attribute VB_Name = "mod_Main"
+Option Explicit
+'G³owny subroutine. Tutaj wywo³ywana jest funkcja do tworzenia wiadomoœci dla zadanych dat oraz typów spó³ek
+
+
+Sub Main()
+
+Application.ScreenUpdating = False
+
+Dim test As Date
+Dim yesterday As Date
+Dim twodaysago As Date
+Dim threedaysago As Date
+test = "27/05/2019"
+
+yesterday = Date - 1
+If Weekday(yesterday, vbMonday) = 7 Then: yesterday = yesterday - 2
+If Weekday(yesterday, vbMonday) = 6 Then: yesterday = yesterday - 1
+twodaysago = yesterday - 1
+If Weekday(twodaysago, vbMonday) = 7 Then: twodaysago = twodaysago - 2
+If Weekday(twodaysago, vbMonday) = 6 Then: twodaysago = twodaysago - 1
+threedaysago = twodaysago - 1
+If Weekday(threedaysago, vbMonday) = 7 Then: threedaysago = threedaysago - 2
+If Weekday(threedaysago, vbMonday) = 6 Then: threedaysago = threedaysago - 1
+
+import_data
+
+Call CreateMessages(Date, "GI")
+Call CreateMessages(Date, "Podwykonawcy")
+Call CreateMessages(yesterday, "GI")
+Call CreateMessages(yesterday, "Podwykonawcy")
+Call CreateMessages(twodaysago, "GI")
+Call CreateMessages(twodaysago, "Podwykonawcy")
+Call CreateMessages(threedaysago, "GI")
+Call CreateMessages(threedaysago, "Podwykonawcy")
+
+MsgBox "Wys³ano maile"
+    
+End Sub
+

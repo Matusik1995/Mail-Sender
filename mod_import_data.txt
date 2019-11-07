@@ -1,0 +1,48 @@
+Attribute VB_Name = "mod_import_data"
+Option Explicit
+'Subroutine do importowania danych z SP. Z zak³adki query pobierany jest adres witryny oraz unikalny klucz guid
+'przypisany do listy z zadaniami. Tutaj wykonywane jest to dla dwóch witryn SP i dane importowane s¹ do osobnych zak³adek
+
+Sub import_data()
+    
+    Dim spSite, key As String
+    Dim DataSheet As Worksheet
+    Dim DataSheet2 As Worksheet
+    Dim QuerySheet As Worksheet
+    Dim tbl As ListObject
+
+    Set DataSheet = ThisWorkbook.Worksheets("DaneGI")
+    Set QuerySheet = ThisWorkbook.Worksheets("query")
+    Set DataSheet2 = ThisWorkbook.Worksheets("DanePodwykon")
+    
+    
+    Dim src(0 To 1) As Variant
+    
+    DataSheet.UsedRange.Clear
+    spSite = QuerySheet.Range("A2")
+    key = QuerySheet.Range("B2")
+  
+    src(0) = spSite & "/_vti_bin"
+    src(1) = "{" & key & "}"
+    
+    DataSheet.ListObjects.Add xlSrcExternal, src, True, xlYes, DataSheet.Range("A1")
+    
+    For Each tbl In DataSheet.ListObjects
+        tbl.Unlist
+    Next tbl
+    
+    DataSheet2.UsedRange.Clear
+    spSite = QuerySheet.Range("A3")
+    key = QuerySheet.Range("B3")
+  
+    src(0) = spSite & "/_vti_bin"
+    src(1) = "{" & key & "}"
+    
+    DataSheet2.ListObjects.Add xlSrcExternal, src, True, xlYes, DataSheet2.Range("A1")
+    
+    For Each tbl In DataSheet2.ListObjects
+        tbl.Unlist
+    Next tbl
+        
+    
+End Sub

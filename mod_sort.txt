@@ -1,0 +1,47 @@
+Attribute VB_Name = "mod_sort"
+Option Explicit
+'Subroutine sortuj¹cy, w zale¿noœci od rodzaju spó³ek podanych na wejœcie (GI/Podwykonawcy) Sortowanie odbywa siê po osobach a nastêpnie
+'po zadaniach
+
+ Sub Sort(companysType As String)
+
+    Dim WsadSheet As Worksheet
+    Dim size As Integer
+    
+If companysType = "GI" Then
+
+    Set WsadSheet = ThisWorkbook.Worksheets("WsadGI")
+    
+ElseIf companysType = "Podwykonawcy" Then
+
+    Set WsadSheet = ThisWorkbook.Worksheets("WsadPodwykon")
+
+End If
+
+    size = WsadSheet.UsedRange.Rows.Count
+    
+
+    WsadSheet.Sort.SortFields.Clear
+    WsadSheet.Sort.SortFields.Add key:= _
+        WsadSheet.Range(WsadSheet.Cells(2, 6), WsadSheet.Cells(size, 6)), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption _
+        :=xlSortNormal
+        
+    WsadSheet.Sort.SortFields.Add key:= _
+        WsadSheet.Range(WsadSheet.Cells(2, 4), WsadSheet.Cells(size, 4)), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption _
+        :=xlSortNormal
+    
+    With WsadSheet.Sort
+        .SetRange Range(Cells(2, 1), Cells(size, 14))
+        .Header = xlNo
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+ 
+
+End Sub
+
+
+
+

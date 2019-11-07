@@ -1,0 +1,45 @@
+Attribute VB_Name = "mod_copy_data"
+Option Explicit
+'Funkcja przygotowuj¹ca dane wsadowe do wysy³ki. Z danych pobranych z SP kopiuje tylko te zadania, dla których termin jest równy dacie podanej na wejœcie.
+'W zale¿noœci od podanego typu spó³ek na wejœcie, funkcja pracuje na odpowiednich zak³adkach
+
+
+Function copyData(messagedate As Date, companysType As String)
+
+Dim WsadSheet, DataSheet, UsersSheet As Worksheet
+Dim i As Integer
+
+If companysType = "GI" Then
+
+    Set WsadSheet = ThisWorkbook.Worksheets("WsadGI")
+    Set DataSheet = ThisWorkbook.Worksheets("DaneGI")
+
+ElseIf companysType = "Podwykonawcy" Then
+
+    Set WsadSheet = ThisWorkbook.Worksheets("WsadPodwykon")
+    Set DataSheet = ThisWorkbook.Worksheets("DanePodwykon")
+    
+End If
+
+Set UsersSheet = ThisWorkbook.Worksheets("U¿ytkownicy")
+
+WsadSheet.Range("A:N").Clear
+DataSheet.Range("A1:N1").Copy WsadSheet.Range("A1")
+
+i = 2
+
+Do Until IsEmpty(DataSheet.Cells(i, 1))
+
+If DataSheet.Cells(i, 7) = "Niewykonane" And DataSheet.Cells(i, 13) = messagedate Then
+    DataSheet.Range(DataSheet.Cells(i, 1), DataSheet.Cells(i, 14)).Copy WsadSheet.Cells(i, 1)
+    WsadSheet.Cells(i, 6) = Application.VLookup(WsadSheet.Cells(i, 6), UsersSheet.Range("C2:E480"), 3, False)
+End If
+
+i = i + 1
+
+
+Loop
+
+
+End Function
+

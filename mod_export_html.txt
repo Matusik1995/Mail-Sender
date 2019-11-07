@@ -1,0 +1,27 @@
+Attribute VB_Name = "mod_export_html"
+Option Explicit
+'funkcja wypisuj¹ca zawartoœæ przekazanych tablic do pliku html, tworz¹c plik pogl¹dowy dla u¿ytkownika
+
+Function ExportHTML(ByRef bodys() As String, ByRef persons() As String, ByRef leaders() As String, ByRef managers() As String, ByRef directors() As String, name As String)
+
+Dim htmlfile As String
+Dim i As Integer
+
+htmlfile = ThisWorkbook.Path & "\" & name & ".html"
+Open htmlfile For Output As #1
+
+For i = 1 To UBound(persons) - LBound(persons)
+
+    Write #1, "<b> Adresat: " & persons(i) & "</b>";
+    Write #1, "<b> Lider: " & leaders(i) & "</b>";
+    Write #1, "<b> Manager: " & managers(i) & "</b>";
+    Write #1, "<b> Dyrektor: " & directors(i) & "</b>"; "<br><br>"
+    Write #1, bodys(i) & "<br><br><br>"
+    
+Next
+
+Close #1
+
+End Function
+
+

@@ -1,0 +1,189 @@
+Attribute VB_Name = "mod_create_messages"
+Option Explicit
+'Najwiêksza funkcja s³u¿¹ca do tworzenia wiadomoœci. Dane potrzebne do wysy³ki zbierane s¹ w trzech tablicach:
+'bodys() - zawiera treœci wiadomoœci, persons() - przechowuje adresatów, managers() - przechowuje adresy managerów do DW
+'tablice nastêpnie s¹ przekazywane do funkcji generuj¹cej podgl¹d oraz funkcji wysy³aj¹cej wiadomoœci
+'funkcja na wejœcie przyjmuje datê, dla której maj¹ zostaæ wys³ane wiadomoœci oraz typ spó³ek (GI/Podwykonawcy)
+
+Function CreateMessages(messagedate As Date, companysType As String)
+
+Dim WsadSheet, QuerySheet As Worksheet
+Dim i As Integer
+Dim body As String
+Dim person As String
+Dim leader As String
+Dim manager As String
+Dim director As String
+Dim DiApersons As String
+
+Dim bodys() As String
+Dim persons() As String
+Dim leaders() As String
+Dim managers() As String
+Dim directors() As String
+Dim tabssize As Integer
+tabssize = 1
+
+
+If companysType = "GI" Then
+
+    Set WsadSheet = ThisWorkbook.Worksheets("WsadGI")
+
+ElseIf companysType = "Podwykonawcy" Then
+
+    Set WsadSheet = ThisWorkbook.Worksheets("WsadPodwykon")
+
+End If
+
+Call copyData(messagedate, companysType) 'wywo³anie funkcji przygotowuj¹cej dane wejœciowe
+Call Sort(companysType) 'wywo³anie funkcji sortuj¹cej
+
+i = 2
+
+Do Until (IsEmpty(WsadSheet.Cells(i, 1)))
+
+        body = ""
+        person = WsadSheet.Cells(i, 6) 'pobranie adresata
+        leader = WsadSheet.Cells(i, 15) 'pobranie adresu lidera
+        manager = WsadSheet.Cells(i, 16) 'pobranie adresu managera
+        director = WsadSheet.Cells(i, 17) 'pobranie adresu dyrektora
+
+    Do
+    
+        body = body & WsadSheet.Cells(i, 4) & " dla spó³ek: " 'pobranie nazwy zadania
+        
+        Do While True 'zbieranie spó³ek
+        
+            body = body & WsadSheet.Cells(i, 5) & ", "
+            If (WsadSheet.Cells(i + 1, 4) = WsadSheet.Cells(i, 4) And WsadSheet.Cells(i + 1, 6) = WsadSheet.Cells(i, 6) And Not IsEmpty(WsadSheet.Cells(i, 4))) Then
+                i = i + 1
+            Else
+                Exit Do
+            End If
+            
+        Loop
+        
+        body = body & "<br>"
+        i = i + 1
+             
+    Loop While WsadSheet.Cells(i, 6) = WsadSheet.Cells(i - 1, 6) And Not IsEmpty(WsadSheet.Cells(i, 6))
+    
+        ReDim Preserve bodys(tabssize)     'dodawanie elementów do tablic
+        ReDim Preserve persons(tabssize)
+        ReDim Preserve leaders(tabssize)
+        ReDim Preserve managers(tabssize)
+        ReDim Preserve directors(tabssize)
+        
+        persons(tabssize) = person
+        bodys(tabssize) = body
+        leaders(tabssize) = leader
+        managers(tabssize) = manager
+        directors(tabssize) = director
+        
+        If persons(tabssize) = "doch01@impel.pl" Then
+            managers(tabssize) = "doch01@impel.pl"
+            directors(tabssize) = "bwoj03@impel.pl"
+        End If
+        If persons(tabssize) = "msol00@impel.pl" Then
+            managers(tabssize) = "doch01@impel.pl"
+            directors(tabssize) = "bwoj03@impel.pl"
+        End If
+        If persons(tabssize) = "jwoj02@impel.pl" Then
+            managers(tabssize) = "doch01@impel.pl"
+            directors(tabssize) = "bwoj03@impel.pl"
+        End If
+        If persons(tabssize) = "awro01@impel.pl" Then
+            managers(tabssize) = "doch01@impel.pl"
+            directors(tabssize) = "bwoj03@impel.pl"
+        End If
+        If persons(tabssize) = "akor09@impel.pl" Then
+            managers(tabssize) = "doch01@impel.pl"
+            directors(tabssize) = "bwoj03@impel.pl"
+        End If
+        If persons(tabssize) = "mint00@impel.pl" Then
+            managers(tabssize) = "doch01@impel.pl"
+            directors(tabssize) = "bwoj03@impel.pl"
+        End If
+        
+        If persons(tabssize) = "mpri00@impel.pl" Or persons(tabssize) = "skre01@impel.pl" Or persons(tabssize) = "bkur00@impel.pl" Then
+            leaders(tabssize) = "mpri00@impel.pl;skre01@impel.pl;bkur00@impel.pl"
+            managers(tabssize) = "apie21@impel.pl"
+            directors(tabssize) = "apie21@impel.pl"
+        End If
+        
+        If persons(tabssize) = "mplo00@impel.pl" Then
+            managers(tabssize) = "mpri00@impel.pl;skre01@impel.pl;bkur00@impel.pl"
+            directors(tabssize) = "apie21@impel.pl"
+        End If
+        If persons(tabssize) = "mtry01@impel.pl" Then
+            managers(tabssize) = "mpri00@impel.pl;skre01@impel.pl;bkur00@impel.pl"
+            directors(tabssize) = "apie21@impel.pl"
+        End If
+        If persons(tabssize) = "brzo00@impel.pl" Then
+            managers(tabssize) = "mpri00@impel.pl;skre01@impel.pl;bkur00@impel.pl"
+            directors(tabssize) = "apie21@impel.pl"
+        End If
+        If persons(tabssize) = "ekol00@impel.pl" Then
+            managers(tabssize) = "mpri00@impel.pl;skre01@impel.pl;bkur00@impel.pl"
+            directors(tabssize) = "apie21@impel.pl"
+        End If
+        If persons(tabssize) = "njun00@impel.pl" Then
+            managers(tabssize) = "mpri00@impel.pl;skre01@impel.pl;bkur00@impel.pl"
+            directors(tabssize) = "apie21@impel.pl"
+        End If
+        If persons(tabssize) = "ikla00@impel.pl" Then
+            managers(tabssize) = "mpri00@impel.pl;skre01@impel.pl;bkur00@impel.pl"
+            directors(tabssize) = "apie21@impel.pl"
+        End If
+        If persons(tabssize) = "jada04@impel.pl" Then
+            managers(tabssize) = "mpri00@impel.pl;skre01@impel.pl;bkur00@impel.pl"
+            directors(tabssize) = "apie21@impel.pl"
+        End If
+        If persons(tabssize) = "esta07@impel.pl" Then
+            managers(tabssize) = "mpri00@impel.pl;skre01@impel.pl;bkur00@impel.pl"
+            directors(tabssize) = "apie21@impel.pl"
+        End If
+        If persons(tabssize) = "osmo00@impel.pl" Then
+            managers(tabssize) = "mpri00@impel.pl;skre01@impel.pl;bkur00@impel.pl"
+            directors(tabssize) = "apie21@impel.pl"
+        End If
+        If persons(tabssize) = "aciu00@impel.pl" Then
+            managers(tabssize) = "mpri00@impel.pl;skre01@impel.pl;bkur00@impel.pl"
+            directors(tabssize) = "apie21@impel.pl"
+        End If
+        If persons(tabssize) = "mkre03@impel.pl" Then
+            managers(tabssize) = "mpri00@impel.pl;skre01@impel.pl;bkur00@impel.pl"
+            directors(tabssize) = "apie21@impel.pl"
+        End If
+        If persons(tabssize) = "asar02@impel.pl" Then
+            managers(tabssize) = "mpri00@impel.pl;skre01@impel.pl;bkur00@impel.pl"
+            directors(tabssize) = "apie21@impel.pl"
+        End If
+        If persons(tabssize) = "jrek00@impel.pl" Then
+            managers(tabssize) = "mpri00@impel.pl;skre01@impel.pl;bkur00@impel.pl"
+            directors(tabssize) = "apie21@impel.pl"
+        End If
+
+        If leaders(tabssize) = "0" Then: leaders(tabssize) = managers(tabssize)
+        If persons(tabssize) = leaders(tabssize) <> 0 Then: leaders(tabssize) = managers(tabssize)
+        If persons(tabssize) = managers(tabssize) <> 0 Then: managers(tabssize) = directors(tabssize)
+
+        
+        tabssize = tabssize + 1
+
+Loop
+
+    If tabssize = 1 Then 'check, czy s¹ maile do wys³ania
+       ' MsgBox ("Brak maili do wys³ania dla daty " & messagedate & " dla spó³ek " & companysType & "!")
+        Exit Function
+    End If
+        
+    
+    'ExportHTML bodys:=bodys, persons:=persons, leaders:=leaders, managers:=managers, directors:=directors, name:="podglad" 'wywo³anie funkcji tworz¹cej podgl¹d
+    
+   ' If MsgBox("Wygenerowano podgl¹d dla daty " & messagedate & " dla spó³ek " & companysType & " . Wys³aæ maile?", vbYesNo) = vbNo Then Exit Function 'generacja komunikatu
+    
+    SendMails persons:=persons, bodys:=bodys, leaders:=leaders, managers:=managers, directors:=directors, messagedate:=messagedate, companysType:=companysType 'wywo³anie funkcji rozsy³aj¹cej maile maile
+
+End Function
+
