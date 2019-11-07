@@ -1,6 +1,6 @@
 Attribute VB_Name = "mod_Main"
 Option Explicit
-'G³owny subroutine. Tutaj wywo³ywana jest funkcja do tworzenia wiadomoœci dla zadanych dat oraz typów spó³ek
+
 
 
 Sub Main()
@@ -34,7 +34,7 @@ Call CreateMessages(twodaysago, "Podwykonawcy")
 Call CreateMessages(threedaysago, "GI")
 Call CreateMessages(threedaysago, "Podwykonawcy")
 
-MsgBox "Wys³ano maile"
+MsgBox "WysÂ³ano maile"
     
 End Sub
 
