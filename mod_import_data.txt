@@ -1,7 +1,5 @@
 Attribute VB_Name = "mod_import_data"
 Option Explicit
-'Subroutine do importowania danych z SP. Z zak³adki query pobierany jest adres witryny oraz unikalny klucz guid
-'przypisany do listy z zadaniami. Tutaj wykonywane jest to dla dwóch witryn SP i dane importowane s¹ do osobnych zak³adek
 
 Sub import_data()
     
